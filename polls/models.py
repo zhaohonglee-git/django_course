@@ -1,7 +1,8 @@
 import http
 from django.db import models
-import datetime
-from django.utils import timezone
+import datetime as dt
+from datetime import timedelta, datetime
+from django.contrib import admin
 
 # Create your models here.
 class Question(models.Model):
@@ -9,11 +10,20 @@ class Question(models.Model):
     pub_date = models.DateField("date published")
 
     def __str__(self):
+        print(self.pub_date)
+        print(type(self.pub_date))
         return self.question_text
 
+    @admin.display(
+        boolean=True,
+        ordering="pub_date",
+        description="Published recently?",
+    )
     def was_published_recently(self):
-        # return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
-        return True
+        now = datetime.now()
+        base_datetime = now - timedelta(days=3)
+        base_datetime2date = datetime.date(base_datetime)
+        return self.pub_date > base_datetime2date
 
 
 class Choice(models.Model):
