@@ -15,6 +15,7 @@
 - app  learning_restframework
 
 ##### something about serializers
+- 序列化和反序列化，采用rest_framework 好用的响应器能够解码JSON OrderDict 等data格式
 - Django 中自带的响应器不是很好用，不能序列化显示数据 from django.http import HttpResponse
 - rest_framework 中好用的响应器（序列化显示数据 Json） from rest_framework.response import Response  
 - from rest_framework import serializers   serializers

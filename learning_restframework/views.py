@@ -15,8 +15,6 @@ from rest_framework.response import Response
 
 ########## Django View raw  ★  ##########
 class StudentView(View):
-    model = Student
-
     def get(self, request):
         return HttpResponse("get...")
 
@@ -26,10 +24,9 @@ class StudentView(View):
 
 ########## rest_framework APIView  ★★  ##########
 class StudentAPIView(APIView):
-    model = Student
-
     def get(self, request):
         print(request.GET)
+
         students = Student.objects.all()
         serializer = StudentSerializer(instance=students, many=True)
         # return HttpResponse(f"rest_framework APIView get...")
@@ -39,6 +36,7 @@ class StudentAPIView(APIView):
 
     def post(self, request):
         print(request.data)
+
         # 将客户端输入的数据反序列化，并且做校验，校验成功则将数据写入数据库
         serializer = StudentSerializer(data=request.data)
 
