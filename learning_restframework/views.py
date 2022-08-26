@@ -45,14 +45,14 @@ class StudentAPIView(APIView):
         else:
             return Response(serializer.errors)
 
-        return HttpResponse(
-            f"rest_framework APIView post...",
-        )
+        # return HttpResponse(
+        #     f"rest_framework APIView post...",
+        # )
 
 
 # serialize the data
 class StudentSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=5)
+    name = serializers.CharField(max_length=10)
     age = serializers.IntegerField()
     sex = serializers.CharField(source="gender")
 
@@ -64,7 +64,17 @@ class StudentDetailAPIView(APIView):
         return Response(serializer.data)
 
     def delete(self, request, id):
-        pass
+        Student.objects.get(pk=id).delete()
+        return Response()
 
     def put(self, request, id):
-        pass
+        serializer = StudentSerializer(data=request.data)
+
+        if serializer.is_valid():
+            print("post validation successful!")
+            Student.objects.filter(pk=id).update(**serializer.validated_data)
+            stu = Student.objects.get(id=id)
+            ser = StudentSerializer(instance=stu, many=False)
+            return Response(ser.data)
+        else:
+            return Response(serializer.errors)
