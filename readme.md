@@ -30,4 +30,5 @@
 ### something else
 - git checkout -b bug-fixes   建立分支并切换到该分支
 - git checkout branch name  切换到已有分支
-- 
+- git push origin local_branch_name:origin_branch_name
+- git branch -a查看所有分支
