@@ -15,7 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from learning_restframework.views import StudentView, StudentAPIView
+from learning_restframework.views import (
+    StudentView,
+    StudentAPIView,
+    StudentDetailAPIView,
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -23,4 +27,7 @@ urlpatterns = [
     path("polls/", include("polls.urls")),
     path("student/", StudentView.as_view(), name="student"),
     path("studentapi/", StudentAPIView.as_view(), name="studentapi"),
+    path(
+        "studentapi/<int:id>/", StudentDetailAPIView.as_view(), name="studentapiDetail"
+    ),
 ]

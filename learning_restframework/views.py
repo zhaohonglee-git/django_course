@@ -34,6 +34,17 @@ class StudentAPIView(APIView):
 
     def post(self, request):
         print(request.data)
+        # 将客户端输入的数据反序列化，并且做校验，校验成功则将数据写入数据库
+        serializer = StudentSerializer(data=request.data)
+
+        if serializer.is_valid():
+            print("post validation successful!")
+            stu = Student.objects.create(**serializer.validated_data)
+            ser = StudentSerializer(instance=stu, many=False)
+            return Response(ser.data)
+        else:
+            return Response(serializer.errors)
+
         return HttpResponse(
             f"rest_framework APIView post...",
         )
@@ -41,6 +52,19 @@ class StudentAPIView(APIView):
 
 # serialize the data
 class StudentSerializer(serializers.Serializer):
-    name = serializers.CharField()
+    name = serializers.CharField(max_length=5)
     age = serializers.IntegerField()
-    gender = serializers.CharField()
+    sex = serializers.CharField(source="gender")
+
+
+class StudentDetailAPIView(APIView):
+    def get(self, request, id):
+        student = Student.objects.get(pk=id)
+        serializer = StudentSerializer(instance=student, many=False)
+        return Response(serializer.data)
+
+    def delete(self, request, id):
+        pass
+
+    def put(self, request, id):
+        pass
