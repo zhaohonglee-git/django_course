@@ -3,8 +3,11 @@ from .models import Student
 from django.views import View
 from django.http import HttpResponse
 from rest_framework.views import APIView
+from rest_framework import generics
+from rest_framework import mixins
 from rest_framework import serializers
 from rest_framework.response import Response
+
 
 # Create your views here.
 
@@ -52,7 +55,7 @@ class StudentAPIView(APIView):
 
 # serialize the data
 class StudentSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=10)
+    name = serializers.CharField(max_length=20)
     age = serializers.IntegerField()
     sex = serializers.CharField(source="gender")
 
@@ -78,3 +81,38 @@ class StudentDetailAPIView(APIView):
             return Response(ser.data)
         else:
             return Response(serializer.errors)
+
+
+########## Mixin ###############
+class StudentMixinAPIView(
+    generics.GenericAPIView, mixins.CreateModelMixin, mixins.ListModelMixin
+):
+
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+
+    def get(self, request):
+        return self.list(request)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class StudentMixinDetailAPIView(
+    generics.GenericAPIView,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+):
+
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+
+    def get(self, request, pk):
+        return self.retrieve(request)
+
+    def delete(self, request, pk):
+        return self.destroy(request)
+
+    def put(self, request, pk):
+        return self.update(request)
