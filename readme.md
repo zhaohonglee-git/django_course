@@ -13,18 +13,23 @@
 
 ### rest_framework 源码学习
 - app  learning_restframework
+
+##### something about serializers
 - Django 中自带的响应器不是很好用，不能序列化显示数据 from django.http import HttpResponse
 - rest_framework 中好用的响应器（序列化显示数据 Json） from rest_framework.response import Response  
 - from rest_framework import serializers   serializers
-- serializers.Serializer (基础性序列化器) ★
-- serializers.ModelSerializer(基于模型类的序列化器) ★★
+- serializers.Serializer (基础性序列化器) ☆
+- serializers.ModelSerializer(基于模型类的序列化器) ☆☆
+  
+##### something about View class
+- Djngo(View) ★ -->rest_framework(APIView) ★★ --> rest_framework(mixins and generics) ★★★  --> rest_framework(generics.RetrieveUpdateDestroyAPIView  Super) ★★★★
 - from rest_framework import mixins and from rest_framework import generics  mixins and generics ★★★
   - mixins.ListModelMixin
   - mixins.CreateModelMixin
   - mixins.RetrieveModelMixin
   - mixins.UpdateModelMixin
   - mixins.DestroyModelMixin
-- 
+- generics.RetrieveUpdateDestroyAPIView, generics.ListCreateAPIView ★★★★
 
 
 ### something else

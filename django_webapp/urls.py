@@ -21,6 +21,8 @@ from learning_restframework.views import (
     StudentDetailAPIView,
     StudentMixinAPIView,
     StudentMixinDetailAPIView,
+    StudentSuperAPIView,
+    StudentSuperDetailAPIView,
 )
 
 urlpatterns = [
@@ -37,5 +39,11 @@ urlpatterns = [
         "studentmixinapi/<int:pk>/",
         StudentMixinDetailAPIView.as_view(),
         name="studentmixinapiDetail",
+    ),
+    path("studentsuperapi/", StudentSuperAPIView.as_view(), name="studentsuperapi"),
+    path(
+        "studentsuperapi/<int:pk>/",
+        StudentSuperDetailAPIView.as_view(),
+        name="studentsuperapiDetail",
     ),
 ]

@@ -1,17 +1,19 @@
-from django.shortcuts import render
 from .models import Student
 from django.views import View
-from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework import mixins
 from rest_framework import serializers
+
+from django.shortcuts import render
+from django.http import HttpResponse
 from rest_framework.response import Response
 
 
 # Create your views here.
+# CRRUD   增删改查查
 
-# Django View
+########## Django View raw  ★  ##########
 class StudentView(View):
     model = Student
 
@@ -22,7 +24,7 @@ class StudentView(View):
         return HttpResponse("post...")
 
 
-# rest_framework APIView
+########## rest_framework APIView  ★★  ##########
 class StudentAPIView(APIView):
     model = Student
 
@@ -53,7 +55,7 @@ class StudentAPIView(APIView):
         # )
 
 
-# serialize the data
+########## serialize the data raw ☆  ##########
 class StudentSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=20)
     age = serializers.IntegerField()
@@ -84,12 +86,20 @@ class StudentDetailAPIView(APIView):
 
 
 ########## Mixin ###############
+
+# serializers.ModelSerializer ☆☆
+class StudentModleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = ["age", "gender", "name"]
+
+
 class StudentMixinAPIView(
     generics.GenericAPIView, mixins.CreateModelMixin, mixins.ListModelMixin
 ):
 
     queryset = Student.objects.all()
-    serializer_class = StudentSerializer
+    serializer_class = StudentModleSerializer
 
     def get(self, request):
         return self.list(request)
@@ -106,7 +116,7 @@ class StudentMixinDetailAPIView(
 ):
 
     queryset = Student.objects.all()
-    serializer_class = StudentSerializer
+    serializer_class = StudentModleSerializer
 
     def get(self, request, pk):
         return self.retrieve(request)
@@ -116,3 +126,16 @@ class StudentMixinDetailAPIView(
 
     def put(self, request, pk):
         return self.update(request)
+
+
+########### ListCreateAPIView extra Super ################
+class StudentSuperAPIView(generics.ListCreateAPIView):
+
+    queryset = Student.objects.all()
+    serializer_class = StudentModleSerializer
+
+
+class StudentSuperDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+
+    queryset = Student.objects.all()
+    serializer_class = StudentModleSerializer
