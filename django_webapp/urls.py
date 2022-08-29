@@ -24,6 +24,7 @@ from learning_restframework.views import (
     StudentSuperAPIView,
     StudentSuperDetailAPIView,
 )
+from viewApp.views import AuthorView, AuthorDetailView, PublishView, PublishDetailView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -46,4 +47,8 @@ urlpatterns = [
         StudentSuperDetailAPIView.as_view(),
         name="studentsuperapiDetail",
     ),
+    path("authors/", AuthorView.as_view(), name="authors"),
+    path("authors/<int:id>/", AuthorDetailView.as_view(), name="authorsDetail"),
+    path("publishes/", PublishView.as_view(), name="publishes"),
+    path("publishes/<int:id>/", PublishDetailView.as_view(), name="publishesDetail"),
 ]

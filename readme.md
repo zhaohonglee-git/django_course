@@ -12,7 +12,11 @@
 
 
 ### rest_framework 源码学习
+- http://www.yuan316.com/  博客地址
 - app  learning_restframework
+- 前后端职责分离的开发模式
+- DRF 核心组件：序列化/反序列化组件、视图（views）组件
+- 
 
 ##### something about serializers
 - 序列化和反序列化，采用rest_framework 好用的响应器能够解码JSON OrderDict 等data格式

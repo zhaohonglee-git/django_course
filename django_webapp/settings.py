@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "polls",
     "learning_restframework",
-    'rest_framework',
+    "rest_framework",
+    "viewApp",
 ]
 
 MIDDLEWARE = [
