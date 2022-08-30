@@ -1,11 +1,25 @@
+from urllib.request import parse_keqv_list
 from django.shortcuts import render
 from .models import Author, Book, Publish
 from rest_framework import serializers
 from rest_framework.views import APIView
+from rest_framework.generics import (
+    GenericAPIView,
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
+from rest_framework.mixins import (
+    CreateModelMixin,
+    ListModelMixin,
+    DestroyModelMixin,
+    RetrieveModelMixin,
+    UpdateModelMixin,
+)
+from rest_framework import viewsets
 from rest_framework.response import Response
 
 
-############ raw serializers.Serializer  #####################
+############ raw serializers.Serializer + APIView  #####################
 
 
 class AuthorSerializer(serializers.Serializer):
@@ -74,13 +88,21 @@ class AuthorDetailView(APIView):
         return Response()
 
 
-############ serializer.ModelSerializer  #####################
+############ serializer.ModelSerializer + APIView #####################
 
 
 class PublishSerializer(serializers.ModelSerializer):
     class Meta:
         model = Publish
         fields = "__all__"
+
+    # 自定义校验，非常灵活
+    def validate_name(self, value):
+
+        if value.endswith("出版社"):
+            return value
+        else:
+            raise serializers.ValidationError('出版社名称并未以"出版社"结尾')
 
 
 class PublishView(APIView):
@@ -124,3 +146,103 @@ class PublishDetailView(APIView):
     def delete(self, request, id):
         Publish.objects.get(pk=id).delete()
         return Response()
+
+
+############ GenericAPIView + serializers.ModelSerializer  利用多重继承解决get代码重复的问题  #####################
+class PublishGenView(GenericAPIView):
+    queryset = Publish.objects
+    serializer_class = PublishSerializer
+
+    def get(self, request):
+        s = self.get_serializer(instance=self.get_queryset(), many=True)
+
+        return Response(s.data)
+
+    def post(self, request):
+        s = self.get_serializer(data=request.data)
+
+        if s.is_valid():
+            print("serializer.validated_data:", s.validated_data)
+
+            s.save()
+            return Response(s.data)
+        else:
+            return Response(s.errors)
+
+
+class PublishGenDetailView(GenericAPIView):
+    queryset = Publish.objects
+    serializer_class = PublishSerializer
+
+    def get(self, request, pk):
+        s = self.get_serializer(instance=self.get_object(), many=False)
+        return Response(s.data)
+
+    def put(self, request, pk):
+        s = self.get_serializer(instance=self.get_object(), data=request.data)
+
+        if s.is_valid():
+            print("serializer.validated_data:", s.validated_data)
+
+            s.save()
+            return Response(s.data)
+        else:
+            return Response(s.errors)
+
+    def delete(self, request, pk):
+        self.get_object().delete()
+        return Response()
+
+
+############ mixins.ListModelMixin & mixins.CreateModelMixin ... + serializers.ModelSerializer  利用多重继承解决get代码重复的问题  #####################
+# 多重继承
+class PublishMixView(GenericAPIView, ListModelMixin, CreateModelMixin):
+    queryset = Publish.objects
+    serializer_class = PublishSerializer
+
+    def get(self, request):
+        return self.list(request)
+
+    def post(self, request):
+        return self.create(request)
+
+
+class PublishMixDetailView(
+    GenericAPIView,
+    DestroyModelMixin,
+    RetrieveModelMixin,
+    UpdateModelMixin,
+):
+    queryset = Publish.objects
+    serializer_class = PublishSerializer
+
+    def get(self, request, pk):
+        return self.retrieve(request, pk)
+
+    def put(self, request, pk):
+        return self.update(request, pk)
+
+    def delete(self, request, pk):
+        self.destroy(request, pk)
+
+
+############ 继续在以上的代码基础上封装（from rest_framework.generics import），将所有的继承类继续抽离到 ListCreateAPIView  RetrieveUpdateDestroyAPIView ############
+class PublishSuperView(ListCreateAPIView):
+    queryset = Publish.objects
+    serializer_class = PublishSerializer
+
+
+class PublishSuperDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Publish.objects
+    serializer_class = PublishSerializer
+
+
+############  viewSet版本 继续封装，封装到一个类中，用dispatch解决不同请求种类与执行方法映射 ############
+# GET(查单个、查所有) POST PUT DELETE
+# URL  .../publish/  --> GET 查所有
+# URL  .../publish/3/  --> GET 查单个
+
+
+class PublishSSView(viewsets.ModelViewSet):
+    queryset = Publish.objects.all()
+    serializer_class = PublishSerializer

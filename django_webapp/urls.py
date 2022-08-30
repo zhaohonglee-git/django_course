@@ -24,7 +24,21 @@ from learning_restframework.views import (
     StudentSuperAPIView,
     StudentSuperDetailAPIView,
 )
-from viewApp.views import AuthorView, AuthorDetailView, PublishView, PublishDetailView
+from viewApp.views import (
+    AuthorView,
+    AuthorDetailView,
+    PublishView,
+    PublishDetailView,
+    PublishGenView,
+    PublishGenDetailView,
+    PublishMixView,
+    PublishMixDetailView,
+    PublishSuperView,
+    PublishSuperDetailView,
+    PublishSSView,
+)
+
+from rest_framework.routers import DefaultRouter
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -51,4 +65,27 @@ urlpatterns = [
     path("authors/<int:id>/", AuthorDetailView.as_view(), name="authorsDetail"),
     path("publishes/", PublishView.as_view(), name="publishes"),
     path("publishes/<int:id>/", PublishDetailView.as_view(), name="publishesDetail"),
+    path("publishesgen/", PublishGenView.as_view(), name="publishesgen"),
+    path(
+        "publishesgen/<int:pk>/",
+        PublishGenDetailView.as_view(),
+        name="publishesgenDetail",
+    ),
+    path("publishesmix/", PublishMixView.as_view(), name="publishesmix"),
+    path(
+        "publishesmix/<int:pk>/",
+        PublishMixDetailView.as_view(),
+        name="publishesmixDetail",
+    ),
+    path("publishessuper/", PublishSuperView.as_view(), name="publishessuper"),
+    path(
+        "publishessuper/<int:pk>/",
+        PublishSuperDetailView.as_view(),
+        name="publishessuperDetail",
+    ),
 ]
+
+
+router = DefaultRouter()
+router.register(r"publishesss", PublishSSView, basename="publishesSS")
+urlpatterns = router.urls
